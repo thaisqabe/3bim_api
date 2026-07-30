@@ -1,0 +1,10 @@
+#ambientes virtuais
+venv/
+env/
+
+#cache do pyhton
+__pycache__/
+*.pyc
+
+#arquivos de ambiente
+.env
