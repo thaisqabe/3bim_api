@@ -1,0 +1,68 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang='pt-br'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+<head>
+    <meta charset='UTF-8'>
+    <title>Produtos</title>
+</head>
+
+<body>
+    <h1>Lista de Produtos</h1>
+    <ul id='lista-produtos'></ul>
+    <script>
+        fetch('http://127.0.0.1:8000/produtos')
+            .then(resposta => resposta.json())
+            .then(produtos => {
+                const lista = document.getElementById('lista-produtos');
+                produtos.forEach(produto => {
+                    const item = document.createElement('li');
+                    item.textContent =
+                        `${produto.nome} - R$ ${produto.preco} (qtd: ${produto.quantidade})`;
+                    lista.appendChild(item);
+                });
+            })
+            .catch(erro => console.error('Erro ao buscar produtos:', erro));
+    </script>
+</body>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffe1f9;
+            color: #4e1542;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #421440;
+            border-bottom: 2px solid #cc2eaa;
+            padding-bottom: 10px;
+        }
+
+        #lista-produtos {
+            list-style: none;
+            padding: 0;
+        }
+
+        #lista-produtos li {
+            background-color: #ffffff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 16px;
+            border-left: 5px solid #cc2eaa;
+            transition: ease-in-out 0.2s;
+        }
+        #lista-produtos li:hover{
+            transform: scale(1.03);
+        }
+    </style>
+
+</html>
