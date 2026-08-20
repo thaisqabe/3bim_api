@@ -4,7 +4,11 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from models import ProdutoDB
+from models import FuncionarioDB
+
 from schemas import ProdutoCreate, ProdutoResponse
+from schemas import FuncionarioCreate, FuncionarioResponse
+
 from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine) # cria as tabelas, se ainda não existirem
@@ -61,3 +65,51 @@ def atualizar_produto(produto_id: int, dados: ProdutoCreate, db: Session = Depen
     db.commit()
     db.refresh(produto)
     return produto
+
+
+
+
+@app.get('/funcionarios', response_model=list[FuncionarioResponse])
+def listar_funcionarios(db: Session = Depends(get_db)):
+    return db.query(FuncionarioDB).all()
+
+
+@app.post('/funcionarios', response_model=FuncionarioResponse, status_code=201)
+def criar_funcionario(funcionario: FuncionarioCreate, db: Session = Depends(get_db)):
+    novo_funcionario = FuncionarioDB(**funcionario.dict())
+    db.add(novo_funcionario)
+    db.commit()
+    db.refresh(novo_funcionario)
+    return novo_funcionario
+
+
+@app.get('/funcionarios/{funcionario_id}', response_model=FuncionarioResponse)
+def obter_funcionario(funcionario_id: int, db: Session = Depends(get_db)):
+    funcionario = db.query(FuncionarioDB).filter(FuncionarioDB.id == funcionario_id).first()
+    if funcionario is None:
+        raise HTTPException(status_code=404, detail='Funcionário não encontrado')
+    return funcionario
+
+
+@app.delete('/funcionarios/{funcionario_id}', status_code=200)
+def remover_funcionario(funcionario_id: int, db: Session = Depends(get_db)):
+    funcionario = db.query(FuncionarioDB).filter(FuncionarioDB.id == funcionario_id).first()
+    if funcionario is None:
+        raise HTTPException(status_code=404, detail='Funcionário não encontrado')
+    db.delete(funcionario)
+    db.commit()
+    return {'mensagem': 'Funcionário excluído!'}
+
+
+@app.put('/funcionarios/{funcionario_id}', response_model=FuncionarioResponse)
+def atualizar_funcionario(funcionario_id: int, dados: FuncionarioCreate, db: Session = Depends(get_db)):
+    funcionario = db.query(FuncionarioDB).filter(FuncionarioDB.id == funcionario_id).first()
+    if funcionario is None:
+        raise HTTPException(status_code=404, detail='Funcionário não encontrado')
+    funcionario.nome = dados.nome
+    funcionario.salario = dados.salario
+    funcionario.cargo = dados.cargo
+    funcionario.departamento = dados.departamento
+    db.commit()
+    db.refresh(funcionario)
+    return funcionario
