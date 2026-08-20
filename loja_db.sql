@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 06-Ago-2026 às 13:37
+-- Tempo de geração: 20-Ago-2026 às 13:48
 -- Versão do servidor: 10.4.22-MariaDB
 -- versão do PHP: 8.1.2
 
@@ -26,6 +26,29 @@ USE `loja`;
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `funcionarios`
+--
+
+CREATE TABLE `funcionarios` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `departamento` varchar(100) NOT NULL,
+  `cargo` varchar(100) NOT NULL,
+  `salario` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `funcionarios`
+--
+
+INSERT INTO `funcionarios` (`id`, `nome`, `departamento`, `cargo`, `salario`) VALUES
+(1, 'nicole', 'vendas', 'diretora', 5000),
+(2, 'joão vinicius', 'comunicação', 'líder', 4000),
+(3, 'fulano', 'qualidade', 'líder', 3000);
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `produtos`
 --
 
@@ -41,12 +64,19 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`id`, `nome`, `preco`, `quantidade`) VALUES
-(1, 'desktop', 1345.44, 20),
+(1, 'desktop rosa', 1345.44, 25),
 (2, 'notebook', 2500.9, 10);
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices para tabela `funcionarios`
+--
+ALTER TABLE `funcionarios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ix_funcionarios_id` (`id`);
 
 --
 -- Índices para tabela `produtos`
@@ -58,6 +88,12 @@ ALTER TABLE `produtos`
 --
 -- AUTO_INCREMENT de tabelas despejadas
 --
+
+--
+-- AUTO_INCREMENT de tabela `funcionarios`
+--
+ALTER TABLE `funcionarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
