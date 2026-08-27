@@ -11,9 +11,15 @@ from schemas import FuncionarioCreate, FuncionarioResponse
 
 from fastapi.middleware.cors import CORSMiddleware
 
-Base.metadata.create_all(bind=engine) # cria as tabelas, se ainda não existirem
 
 app = FastAPI()
+
+@app.on_event("startup")
+def criar_tabelas():
+    Base.metadata.create_all(bind=engine)
+
+
+
 
 app.add_middleware(
  CORSMiddleware,
@@ -23,7 +29,11 @@ app.add_middleware(
  allow_headers=['*'],
 )
 
+def buscar_produto(db: Session, produto_id: int):
+    return db.query(ProdutoDB).filter(ProdutoDB.id == produto_id).first()
 
+
+    
 @app.get('/produtos', response_model=list[ProdutoResponse])
 def listar_produtos(db: Session = Depends(get_db)):
     return db.query(ProdutoDB).all()
@@ -39,14 +49,14 @@ def criar_produto(produto: ProdutoCreate, db: Session = Depends(get_db)):
 
 @app.get('/produtos/{produto_id}', response_model=ProdutoResponse)
 def obter_produto(produto_id: int, db: Session = Depends(get_db)):
-    produto = db.query(ProdutoDB).filter(ProdutoDB.id == produto_id).first()
+    produto = buscar_produto(db, produto_id)    
     if produto is None:
         raise HTTPException(status_code=404, detail='Produto não encontrado')
     return produto
 
 @app.delete('/produtos/{produto_id}', status_code=200)
 def remover_produto(produto_id: int, db: Session = Depends(get_db)):
-    produto = db.query(ProdutoDB).filter(ProdutoDB.id == produto_id).first()
+    produto = buscar_produto(db, produto_id)
     if produto is None:
         raise HTTPException(status_code=404, detail='Produto não encontrado')
     db.delete(produto)
@@ -56,7 +66,7 @@ def remover_produto(produto_id: int, db: Session = Depends(get_db)):
 # PUT /produtos/{id} -> atualiza um produto existente no banco
 @app.put('/produtos/{produto_id}', response_model=ProdutoResponse)
 def atualizar_produto(produto_id: int, dados: ProdutoCreate, db: Session = Depends(get_db)):
-    produto = db.query(ProdutoDB).filter(ProdutoDB.id == produto_id).first()
+    produto = buscar_produto(db, produto_id)
     if produto is None:
         raise HTTPException(status_code=404, detail='Produto não encontrado')
     produto.nome = dados.nome

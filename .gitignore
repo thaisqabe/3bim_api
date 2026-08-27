@@ -8,3 +8,9 @@ __pycache__/
 
 #arquivos de ambiente
 .env
+
+#testes unitarios
+htmlcov/
+.coverage
+relatorio.html
+resultado.xml
