@@ -12,5 +12,4 @@ __pycache__/
 #testes unitarios
 htmlcov/
 .coverage
-relatorio.html
 resultado.xml
